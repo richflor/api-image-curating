@@ -10,23 +10,34 @@ const api = createApi({
     accessKey: accessKey
 })
 
-const getImages = (req:Request, res:Response, next:NextFunction)=>{
+const getImg = async (req:Request, res:Response, next:NextFunction)=>{
     if(checkParams(req.params.keyword)) {
-        api.search.getPhotos({ query: req.params.keyword, page: 1, perPage: 10})
+        const json = await api.search.getPhotos({ query: req.params.keyword, page: 1, perPage: 10})
         .then(result => {
             if (result.errors) {
                 console.log('error occurred: ', result.errors[0]);
                 handleError(req, res, 500)
             } else {
-                const json = result.response.results;
-                console.log("json");
-                res.json(json);
+                console.log("json received");
+                const dataDump = result.response.results;
+                const data = dataDump.map(photo => {
+                    return {
+                        url:photo.urls.regular,
+                        link:photo.links.download_location,
+                        linkUser:photo.user.links.self
+                    }
+                })
+                return data
             }
-          })
-        console.log(req.params)
-        next();
-        // res.send(`param is ${req.params.keyword}`)
+        })
+        console.log("promise resolved");
+        if(json?.length === 0) {
+            return res.status(200).send("Nothing found with current parameter")
+        }
+        return res.json(json);
+        // next();
     }
+    handleError(req, res, 400, "Keyword parameter has invalid characters")
 }
 
 const regex:RegExp = /\W/;
@@ -44,4 +55,4 @@ function checkParams(param:any):boolean {
     return true;
 }
 
-export const getImg = getImages
+export const getImages = getImg

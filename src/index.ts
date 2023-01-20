@@ -1,18 +1,18 @@
-import express, {Response, Request} from "express";
+import express, {Response, Request, NextFunction} from "express";
 import dotenv from "dotenv";
 // import { testRouter } from "./routes/test";
-import { unsplash } from "./routes/unsplash";
+//import { unsplash } from "./routes/unsplash";
+import { getImages } from "./controllers/unsplash";
 import { handleError } from "./controllers/errors";
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
-const URIroot = "/api/v1"
+const uriRoot = "/api/v1"
 
 
 // app.use("/test", testRouter)
-app.use("/api/v1", [unsplash
-])
+app.use(`${uriRoot}/:keyword`, getImages)
 
 // app.get("/", (req, res)=>{
 //     res.redirect("/test");
@@ -21,8 +21,8 @@ app.use("/api/v1", [unsplash
 // app.get(URIroot, "/:keyword" );
 
 app.all("*", (req, res)=>{
-    if(req.method != "GET") {
-        handleError(req, res, 400);
+    if(req.method !== "GET") {
+        handleError(req, res, 400, "Wrong method used, only GET method is allowed");
     }
     handleError(req, res, 404)
 })
