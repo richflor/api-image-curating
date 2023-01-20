@@ -4,7 +4,7 @@ import { getImages } from "../controllers/unsplash";
 
 const Router = express.Router();
 
-Router.get("/:keyword", (req, res, next)=>{
+Router.post("/analyze", (req, res, next)=>{
     getImages(req, res, next);
 })
 

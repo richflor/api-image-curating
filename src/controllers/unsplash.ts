@@ -11,8 +11,10 @@ const api = createApi({
 })
 
 const getImg = async (req:Request, res:Response, next:NextFunction)=>{
-    if(checkParams(req.params.keyword)) {
-        const json = await api.search.getPhotos({ query: req.params.keyword, page: 1, perPage: 10})
+    console.log(req.body)
+    const keyword = req.body.keyword;
+    if(checkParams(keyword)) {
+        const json = await api.search.getPhotos({ query: keyword, page: 1, perPage: 10})
         .then(result => {
             if (result.errors) {
                 console.log('error occurred: ', result.errors[0]);
