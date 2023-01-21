@@ -2,9 +2,12 @@ import { Response, Request, NextFunction } from "express-serve-static-core";
 import { createApi } from "unsplash-js";
 import dotenv from "dotenv";
 import { handleError } from "./errors";
-dotenv.config();
 
+dotenv.config();
 const accessKey = process.env.API_ACCESS_KEY || "";
+// can't send more than 16 images to google cloud vision api
+// at least not with a free account
+const numberOfImages = 16;
 
 const api = createApi({
     accessKey: accessKey
@@ -16,11 +19,11 @@ const getImg = async (req:Request, res:Response, next:NextFunction)=>{
     }
     const keyword = req.body.keyword;
     if(checkParams(req.body)) {
-        const json = await api.search.getPhotos({ query: keyword, page: 1, perPage: 10})
+        const json = await api.search.getPhotos({ query: keyword, page: 1, perPage: numberOfImages})
         .then(result => {
             if (result.errors) {
                 console.log('error occurred: ', result.errors[0]);
-                handleError(req, res, 500)
+                handleError(req, res, 500, `Error from Unsplash API :${result.errors[0]}`)
             } else {
                 console.log("json received");
                 const dataDump = result.response.results;
@@ -39,18 +42,13 @@ const getImg = async (req:Request, res:Response, next:NextFunction)=>{
                             }
                         ]                        
                     }
-                    // return {
-                    //     url:photo.urls.regular,
-                    //     link:photo.links.download_location,
-                    //     linkUser:photo.user.links.self
-                    // }
                 })
                 return data
             }
         })
         console.log("promise resolved");
         if(json?.length === 0) {
-            return res.status(200).send("Nothing found with current parameter")
+            return res.status(200).send("No image was found, try with another keyword")
         }
         //return res.json(json);
         res.locals.labels = req.body.labels;

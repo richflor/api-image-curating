@@ -18,7 +18,7 @@ const httpError = (req:Request, res:Response, errorStatus:number = defaultError,
         }        
     }
 
-    res.status(errorStatus).send(`<h1>${message}</h1>`);
+    res.status(errorStatus).send(message);
 }
 
 export const handleError = httpError;

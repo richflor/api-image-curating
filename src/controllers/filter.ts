@@ -9,10 +9,14 @@ const filter = (req:Request, res:Response, next:NextFunction) => {
             )
         }
     });
-    console.log("filter")
+    console.log("filtering")
     //return res.status(200).json(toFilter)
     const labels = res.locals.labels;
     const filteredReq = toFilter.filter((image: any) => checkLabels(image.labels, labels));
+    console.log(`${filteredReq.length} matches`)
+    if(filteredReq.length < 1) {
+        return res.status(200).send("No matches were found. Try with other labels")
+    }
     return res.status(200).json(
         {
             keyword:res.locals.keyword,
@@ -48,7 +52,7 @@ function checkRegex(label:string, schema:string):boolean {
         //console.log("no match");
         return false;
     }
-    console.log("match");
+    //console.log("match");
     return true;
 }
 
