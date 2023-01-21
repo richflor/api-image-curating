@@ -8,11 +8,11 @@ const client = new vision.ImageAnnotatorClient({
 
 const toGoogle = async (req:Request, res:Response, next:NextFunction) => {
     const request = req.body;
-    console.log(req.body.requests[0])
     const response = await client.batchAnnotateImages(request);
     console.log("Received response from cloud vision");
-    res.json(response);
-    //next();
+    // res.json(response);
+    req.body = response;
+    next();
 }
 
 

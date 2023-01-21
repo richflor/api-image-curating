@@ -16,7 +16,7 @@ const getImg = async (req:Request, res:Response, next:NextFunction)=>{
     }
     const keyword = req.body.keyword;
     if(checkParams(req.body)) {
-        const json = await api.search.getPhotos({ query: keyword, page: 1, perPage: 3})
+        const json = await api.search.getPhotos({ query: keyword, page: 1, perPage: 10})
         .then(result => {
             if (result.errors) {
                 console.log('error occurred: ', result.errors[0]);
@@ -53,6 +53,9 @@ const getImg = async (req:Request, res:Response, next:NextFunction)=>{
             return res.status(200).send("Nothing found with current parameter")
         }
         //return res.json(json);
+        res.locals.labels = req.body.labels;
+        res.locals.keyword = req.body.keyword;
+        res.locals.imgLinks = json.requests.map((photo: { image: { source: { imageUri: string; }; }; }) => photo.image.source.imageUri)
         req.body = json;
         return next();
     }
