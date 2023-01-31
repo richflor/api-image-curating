@@ -13,8 +13,11 @@ A third optionnal parameter is called limit, it is the number of images to submi
 - Example
 
 Here is an example of request:
+
 route : http://localhost:3000/api/v1/analyze
+
 header : post 
+
 body : {
     "keyword": "guadeloupe",
     "labels": ["beach", "tree"]
