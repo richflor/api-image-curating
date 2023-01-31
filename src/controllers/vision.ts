@@ -8,6 +8,7 @@ const client = new vision.ImageAnnotatorClient({
 
 const toGoogle = async (req:Request, res:Response, next:NextFunction) => {
     const request = req.body;
+    console.log(`number of request ${request.length}`);
     const response = await client.batchAnnotateImages(request)
     .catch((err) => {
         console.log(err);

@@ -36,6 +36,9 @@ function checkLabels(labelstoCheck:string[], labels:string[]):boolean {
         const found = labelstoCheck.find(labelBeingChecked => checkRegex(labelBeingChecked, label))
         if(found){
             countLabelsMatch++;
+            if(countLabelsMatch >= nbrLabels) {
+                break;
+            }
         }
     }
     // console.log(`labels:${nbrLabels}, count:${countLabelsMatch}`)
